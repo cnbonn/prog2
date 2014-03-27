@@ -1,3 +1,22 @@
+///////////////////////////////////////////////////////////////////////////////
+//                              Prog 2                                       //
+//                       234-Trees and Binary Files                          //
+///////////////////////////////////////////////////////////////////////////////
+//
+//Brief: This program is designed to construct a 234-tree based off of a given
+//       input file, by building the tree off of a binary output file, not by
+//       building it in memory.
+//
+//File: prog2.cpp
+//
+//Date (Assigned...Due): 3/3/14...4/1/14
+//
+//Authors: Charles Bonn / Joseph Mowry
+//
+//Instructor: Dr. Corwin
+//
+//Description: [stuff]
+
 #include <iostream>
 #include <ifstream>
 #include <fstream>
@@ -13,10 +32,10 @@ struct b_tree_node
   // may need to force zeroes in any padding of the struct
 }
 
-bool insert( int read_num, ifstream &tree_file_name )
-bool read_node()
-bool reorder()
-bool write_node(node* temp, ifstrean &tree_file_name )
+void insert( int read_num, ifstream &tree_file_name );
+bool read_node();
+bool reorder();
+bool write_node(node* temp, ifstrean &tree_file_name );
 {
   char* buffer = new char[size];
   
@@ -92,3 +111,33 @@ int main(int argc, char **argv )
   return 0;
 }
 
+void tree_insert ( int read_num, ifstream &tree_file_name  )
+{
+  //check to see if 4-node
+  int temp;
+  tree_file_name.seekg ( 0, ios::beg );
+  tree_file_name.read ( temp, 4 );
+  if( temp == 0 )
+    //node is empty
+  else if( temp == 3 )
+  //split, etc
+
+  //otherwise check where it all goes in the tree
+  
+}
+
+bool is_leaf ( ifstrea &tree_file_name, int node_num )
+{
+  int i = 0;
+  int temp = 0; //placeholder to check child
+  tree_file_name.seekg( i, ios::beg );
+  for( i = ( ( node_num * 32) + 16 ); i < ( ( node_num + 1 ) * 32); )
+  {
+    tree_file_name.read( temp, 4 ); //read child into temp
+    i += 4; //increment to next child
+    
+    if( temp != 0)  //indicates child...not a leaf
+      return false;
+  }  
+  return true;
+}
