@@ -10,7 +10,7 @@ struct b_tree_node
   int key_val[3];  // key values (0 to num_keys -1)
   int child[4];    // child file addresses ( 0 to num_keys )
                    // [record of index]
-
+  // may need to force zeroes in any padding of the struct
 }
 
 bool insert( int read_num, ifstream &tree_file_name )
