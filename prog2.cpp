@@ -69,7 +69,8 @@ bool write_node()
 int main(int argc, char **argv )
 {
   int read_num;
-
+  ifstream text;
+  fstream fout;
 
   // check for proper inputs
   if( argc != 2)
@@ -77,33 +78,26 @@ int main(int argc, char **argv )
     return -1: // error for improper file ammount
   }
   
-  // check input file
-  ifstream text;
-  text.open(argv[1])
+  text.open( argv[0] );
+ 
   if(!text)
   {
     return -2;
   }
+  
+  fout.open( argv[1], ios::binary );  
 
-  // call insert function 
+  if(!tree_file)
+  {
+    return -3;
+  }
+  
   while( !text.eof() )
   {
     fin << read_num;
     insert( read_num, tree_file_name);
   }
-  fstream tree_file;
-  tree_file.open(argv[1],  ios::binary | ios:app )
-  if(!tree_file)
-  {
-    return -3; 
-  }
 
-  //insert stuff
-  while( !text.eof() )
-  {
-    fin << read_num;
-    insert( read_num , 
-  }
   // close files
   text.close();
   tree_file.close();
@@ -118,7 +112,7 @@ void tree_insert ( int read_num, ifstream &tree_file_name  )
   tree_file_name.seekg ( 0, ios::beg );
   tree_file_name.read ( temp, 4 );
   if( temp == 0 )
-    //node is empty
+    
   else if( temp == 3 )
   //split, etc
 
@@ -126,7 +120,7 @@ void tree_insert ( int read_num, ifstream &tree_file_name  )
   
 }
 
-bool is_leaf ( ifstrea &tree_file_name, int node_num )
+bool is_leaf ( ifstream &tree_file_name, int node_num )
 {
   int i = 0;
   int temp = 0; //placeholder to check child
@@ -141,3 +135,9 @@ bool is_leaf ( ifstrea &tree_file_name, int node_num )
   }  
   return true;
 }
+
+void split_node ( ifstream &tree_file_name )
+{
+  
+}
+
