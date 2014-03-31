@@ -22,7 +22,9 @@
 #include <fstream>
 
 using namespace std;
+
 const int size 32;
+
 struct b_tree_node
 {
   int num_keys;    // number of keys in this node
@@ -33,89 +35,19 @@ struct b_tree_node
 }
 
 void insert( int read_num, ifstream &tree_file_name );
-bool read_node();
-bool reorder();
-
-void read_node ( b_tree_node node, fstream &fout, int curr_node )
-{
-  int temp;
-  
-  fout.seekg ( 0, ios::beg );
-  fout.read ( node, 32 );
-}
-
-bool write_node( b_tree_node node, fstream &fout, int read_num )
-{
-  //nick
-  
-}
-
-void tree_insert ( int read_num, fstream &fout  )
-{
-  read_node( node, fout, curr_node );
-  //check to see if 4-node
-  int temp;
-  int i;
-  fout.seekg ( 0, ios::beg );
-  fout.read ( temp, 4 );
-  
-  //empty case
-  if( node.num_keys == 0 )
-    write_node( node, fout, read_num, 0 );
-
-  else if( node.num_keys < 3 )
-  {
-    for(i = 0; i < 3; i++ )
-    {
-      if( node.key_val[i] > read_num )
-      {
-        temp = key_val[i];
-        key_val[i] = read_num;
-      }
-    }
-  }
-  else
-  {
-    //split, etc
-    temp = node.key_val[1]; //save middle val
-    node.key_val[1] = 0;    //and remove it
-    
-    new(nothrow) b_tree_node leftnode = {};
-    new(nothrow) b_tree_node rightnode = {};
-    new(nothrow) b_tree_node root = {};
-
-    
-    
-  } 
-}
-
-bool is_leaf ( fstream &fout, int node_num )
-{
-  int i = 0;
-  int temp = 0; //placeholder to check child
-  tree_file_name.seekg( i, ios::beg );
-  for( i = ( ( node_num * 32) + 16 ); i < ( ( node_num + 1 ) * 32); )
-  {
-    tree_file_name.read( temp, 4 ); //read child into temp
-    i += 4; //increment to next child
-    
-    if( temp != 0)  //indicates child...not a leaf
-      return false;
-  }  
-  return true;
-}
-
-void split_node ( fstream &fout )
-{
-  
-}
+bool is_leaf( fstream &fout, int node_num );
+bool read_node(   );
+void split_node(   );
+void tree_insert(   );
+void write_node(   );
 
 int main(int argc, char **argv )
 {
   int read_num;
-  b_tree_node node = {};  //init all members to 0
+  int i;
+  b_tree_node ins_node = {0};  //init all members to 0
   ifstream text;
-  fstream fout;
+  fstream tree;
 
   // check for proper inputs
   if( argc != 3)
@@ -130,20 +62,32 @@ int main(int argc, char **argv )
     return -2;
   }
   
-  fout.open( argv[1], ios::binary );  
+  tree.open( argv[1], ios::binary );  
 
   if(!tree_file)
   {
     return -3;
   }
-  
-  while( !text.eof() )
-  {
-    text >> read_num;
-    read_node( node, 
-    insert( read_num, fout );
-  }
 
+  while( fin >> read_num )  //while text file not empty
+  { 
+    if( num_keys == 3 ) 
+      split_node( ins_nod );
+    
+    for( i = 0; ins_node.key_val[i] > ins_node.read_num; i++ )
+    {
+      temp = ins_node.key_val[i];
+      ins_node.key_val[i] = ins_node.read_num;
+      ins_node.read_num = temp;
+    } 
+
+    /*while( tree.read( char*( &ins_node ), size ) )
+    {
+      if( 
+      read_node( node, 
+      insert( read_num, fout );
+     }*/
+  }
   // close files
   text.close();
   tree_file.close();
@@ -151,3 +95,50 @@ int main(int argc, char **argv )
   return 0;
 }
 
+bool is_leaf ( fstream &fout, int node_num )
+{
+  int i = 0;
+  int temp = 0; //placeholder to check child
+  tree_file_name.seekg( i, ios::beg );
+  for( i = ( ( node_num * size) + (size/2) ); i < ( ( node_num + 1 ) * size); )
+  {
+    tree_file_name.read( temp, 4 ); //read child into temp
+    i += 4; //increment to next child
+    
+    if( temp != 0)  //indicates child...not a leaf
+      return false;
+  }  
+  return true;
+}
+
+void pad_zero ( b_tree_node node )
+{
+  int i;  
+
+  node.num_keys = 0;
+  for( i = 0; i < 3; i++ )
+  {
+    node.key_val[i] = 0;
+    node.child[i] = 0;
+    node.child[i+1] = 0;
+  }
+}
+
+void split_node ( b_tree_node ins_node )
+{
+  int temp;
+
+  left_node = new(nothrow) b_tree_node;
+  right_node = new(nothrow) b_tree_node;
+  pad_zero( left_node );
+  pad_zero( right_node );
+  
+  left_node.num_keys + 1;
+  right_node.num_keys + 1;
+  left_node.key_val[0] = ins_node.key_val[0];
+  right_node.key_val[0] = ins_node.key_val[2];
+  
+  temp = ins_node[1];
+  pad_zero( ins_node );
+  ins_node[1] = temp;
+}
