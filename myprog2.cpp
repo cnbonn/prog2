@@ -34,12 +34,10 @@ struct b_tree_node
   // may need to force zeroes in any padding of the struct
 }
 
-void insert( int read_num, ifstream &tree_file_name );
-bool is_leaf( fstream &fout, int node_num );
-bool read_node(   );
-void split_node(   );
-void tree_insert(   );
-void write_node(   );
+void insert( fstream &tree_file, int read_num );
+bool is_leaf( fstream &tree_file, int node_num );
+void pad_zero( b_tree_node node );
+void split_node( fstream &tree_file, b_tree_node ins_node );
 
 int main(int argc, char **argv )
 {
@@ -52,7 +50,9 @@ int main(int argc, char **argv )
   // check for proper inputs
   if( argc != 3)
   {
-    return -1: // error for improper file ammount
+  ild is a leaf, insert the value
+    //
+    //return -1: // error for improper file ammount
   }
   
   text.open( argv[0] );
@@ -70,17 +70,8 @@ int main(int argc, char **argv )
   }
 
   while( fin >> read_num )  //while text file not empty
-  { 
-    if( num_keys == 3 ) 
-      split_node( ins_nod );
-    
-    for( i = 0; ins_node.key_val[i] > ins_node.read_num; i++ )
-    {
-      temp = ins_node.key_val[i];
-      ins_node.key_val[i] = ins_node.read_num;
-      ins_node.read_num = temp;
-    } 
-
+  {
+    insert( read_num, tree_file );
     /*while( tree.read( char*( &ins_node ), size ) )
     {
       if( 
@@ -97,7 +88,7 @@ int main(int argc, char **argv )
   return 0;
 }
 
-bool is_leaf ( fstream &fout, int node_num )
+bool is_leaf ( fstream &tree_file, int node_num )
 {
   int i = 0;
   int temp = 0; //placeholder to check child
@@ -122,62 +113,116 @@ void pad_zero ( b_tree_node node )
   {
     node.key_val[i] = 0;
     node.child[i] = 0;
-    node.child[i+1] = 0;
   }
+  node.child[3] = 0;
 }
 
-void split_node ( b_tree_node ins_node )
+void split_node ( fstream &tree_file, b_tree_node ins_node )
 {
   int temp;
-
-  b_tree_node* left_node = new(nothrow) b_tree_node;
-  b_tree_node* right_node = new(nothrow) b_tree_node;
+  int pos;
+  
+  //create left and right nodes, set to zero
+  b_tree_node left_node;
+  b_tree_node right_node;
   pad_zero( left_node );
   pad_zero( right_node );
   
+  //assign nodes their respective values
   left_node.num_keys = 1;
   right_node.num_keys = 1;
   left_node.key_val[0] = ins_node.key_val[0];
   right_node.key_val[0] = ins_node.key_val[2];
   
-  temp = ins_node[1];
+  //move middle value, set back to zero, and place into first spot
+  temp = ins_node.key_val[1];
   pad_zero( ins_node );
-  ins_node[1] = temp;
+  ins_node.key_val[0] = temp;
+
+  //write left 
+  pos = tree_file.seekg( 0, ios::end );
+  ins_node.child[0] = (pos/size);
+  tree_file.write( (char*)&left_node, size );
+  
+  //write right
+  pos = tree_file.seekg( 0 , ios::end );
+  ins_node.child[2] = (pos/size);
+  tree_file.write( (char*)&right_node, size );
 }
 
-void free_tree( b_tree_node node );
-{
-  if( is_leaf( node ) )
-    delete node;
-  
-  else
-  {
-    for( i = 0; i < 4; i++ )
-    {
-      delete node.child[i];
-    }
-  
-}
 
-void insert( int readnum, ifstream &tree_file)
+void insert(ifstream &tree_file, int read_num, int node_num, int parent)
 {
+    int i;
+    int temp;
+    b_tree_node temp_node;
+   
     //if(node @ tree_file_name is a 4 node, meaning 3 key values)
-    if( tree_file.seekg( 0 , ios::beg ) == 3)
+    tree_file.read((char*)&temp, size)
+    if( temp.num_keys == 3 )
     {
-    //  temp = key_value[1]
-    //  split(node) gives you two 2-nodes
-        split( node );
-    //  if(tellg(tree_file_name) == 0) //root
-        if( tellg( tree_file ) == 0 )
-    //    write the pair of  2-nodes at the end of the file
-          write( tree_file );
+        //split root
+        if( tree_file.tellg() == 0 )
+        {
+          split( tree_file, temp_node );
+        }
+        else
+          // rotate function.
     
-    //for each key value, check if readnum fits betwwen them
-    //
+         
+    }
+    for( i = 0; i < 3; i++ )
+    {
+      if( read_num < temp.key_val[i] )
+      
+    }
+
+    // not 4 node
+    
+    //empty case    
+   /* tree_file.seekg( 0 , ios::end );
+    temp = tree_file.tellg();
+    tree_file.seekg( 0 , ios::beg );
+    if( temp == tree_file.tellg() )
+    {
+      
+    }*/
+
     //if the child is a leaf, insert the value
     //
     //else
     //  seekg(tree_file_name, position of that node)
     //  insert(readnum, tree_file_name)
     //return;
+}
+
+
+int search_tree( ifstream &tree_file, int node_num, int read_num)
+{
+  b_tree_node temp_node;
+  tree_file.seekg( (node_num*32) , ios::beg);
+  tree_file.read( (char*) &temp, size);
+
+  //base case
+  if( is_leaf( tree_file, node_num ) )
+     return node_num;
+
+  if( num_key == 3 )
+  {
+    split( tree_file, temp_node);
+  }
+
+  for( int i = 0; i < 3 ; i++)
+  {
+    if( (read_num < temp.key_val[i]) && (temp.key_val[i] != 0)  )
+    {
+      search_tree(tree_file, temp.child[i] , read_num);
+    }
+    
+    if( (read_num > temp.key_val[i]) && (temp.key_val[i] != 0) )
+    {
+      search_tree(tree_file, temp.child[i+1], read_num);
+    } 
+  }  
+  
 }
