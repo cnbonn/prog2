@@ -89,6 +89,8 @@ int main(int argc, char **argv )
      }*/
   }
   // close files
+
+  free_tree();
   text.close();
   tree_file.close();
 
@@ -128,17 +130,54 @@ void split_node ( b_tree_node ins_node )
 {
   int temp;
 
-  left_node = new(nothrow) b_tree_node;
-  right_node = new(nothrow) b_tree_node;
+  b_tree_node* left_node = new(nothrow) b_tree_node;
+  b_tree_node* right_node = new(nothrow) b_tree_node;
   pad_zero( left_node );
   pad_zero( right_node );
   
-  left_node.num_keys + 1;
-  right_node.num_keys + 1;
+  left_node.num_keys = 1;
+  right_node.num_keys = 1;
   left_node.key_val[0] = ins_node.key_val[0];
   right_node.key_val[0] = ins_node.key_val[2];
   
   temp = ins_node[1];
   pad_zero( ins_node );
   ins_node[1] = temp;
+}
+
+void free_tree( b_tree_node node );
+{
+  if( is_leaf( node ) )
+    delete node;
+  
+  else
+  {
+    for( i = 0; i < 4; i++ )
+    {
+      delete node.child[i];
+    }
+  
+}
+
+void insert( int readnum, ifstream &tree_file)
+{
+    //if(node @ tree_file_name is a 4 node, meaning 3 key values)
+    if( tree_file.seekg( 0 , ios::beg ) == 3)
+    {
+    //  temp = key_value[1]
+    //  split(node) gives you two 2-nodes
+        split( node );
+    //  if(tellg(tree_file_name) == 0) //root
+        if( tellg( tree_file ) == 0 )
+    //    write the pair of  2-nodes at the end of the file
+          write( tree_file );
+    
+    //for each key value, check if readnum fits betwwen them
+    //
+    //if the child is a leaf, insert the value
+    //
+    //else
+    //  seekg(tree_file_name, position of that node)
+    //  insert(readnum, tree_file_name)
+    //return;
 }
